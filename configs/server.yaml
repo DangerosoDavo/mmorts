@@ -12,7 +12,7 @@ jwt:
 
 redis:
   address: "loginserver_redis:6379"  # Existing Redis on shared_services network
-  password: ""
+  password: "SecureRedisPassword123!DoExist"
   db: 0
   blacklist_prefix: "jwt:blacklist:"
 
