@@ -11,7 +11,7 @@ jwt:
   public_key_refresh_hours: 24
 
 redis:
-  address: "loginserver_redis:6379"  # Use service name in Docker
+  address: "loginserver_redis:6379"  # Existing Redis on shared_services network
   password: ""
   db: 0
   blacklist_prefix: "jwt:blacklist:"
@@ -25,7 +25,7 @@ chat:
   rate_limit: 10  # messages per minute per player
 
 database:
-  host: "loginserver_mysql"  # Use service name in Docker
+  host: "loginserver_mysql"  # Existing MySQL on shared_services network
   port: 3306
   user: "mmorts"
   password: "mmorts"

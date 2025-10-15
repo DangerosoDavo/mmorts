@@ -12,11 +12,7 @@ services:
       - CONFIG_PATH=/root/configs/server.yaml
     volumes:
       - ./configs:/root/configs:ro
-    depends_on:
-      redis:
-        condition: service_healthy
-      mariadb:
-        condition: service_healthy
+    # Removed depends_on - using existing shared_services Redis and MariaDB
     networks:
       - shared_services
     restart: unless-stopped
@@ -27,47 +23,50 @@ services:
       retries: 3
       start_period: 10s
 
-  redis:
-    image: redis:7-alpine
-    container_name: mmorts-redis
-    ports:
-      - "6379:6379"
-    networks:
-      - shared_services
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 3s
-      retries: 3
-    volumes:
-      - redis_data:/data
+  # Redis and MariaDB are commented out - using existing instances on shared_services network
+  # Uncomment below if you need dedicated instances for this service
 
-  mariadb:
-    image: mariadb:10.11
-    container_name: mmorts-mariadb
-    environment:
-      MYSQL_ROOT_PASSWORD: rootpass
-      MYSQL_DATABASE: mmorts
-      MYSQL_USER: mmorts
-      MYSQL_PASSWORD: mmorts
-    ports:
-      - "3306:3306"
-    networks:
-      - shared_services
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
-      interval: 10s
-      timeout: 3s
-      retries: 3
-    volumes:
-      - mariadb_data:/var/lib/mysql
+  # redis:
+  #   image: redis:7-alpine
+  #   container_name: mmorts-redis
+  #   ports:
+  #     - "6379:6379"
+  #   networks:
+  #     - shared_services
+  #   restart: unless-stopped
+  #   healthcheck:
+  #     test: ["CMD", "redis-cli", "ping"]
+  #     interval: 10s
+  #     timeout: 3s
+  #     retries: 3
+  #   volumes:
+  #     - redis_data:/data
+
+  # mariadb:
+  #   image: mariadb:10.11
+  #   container_name: mmorts-mariadb
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: rootpass
+  #     MYSQL_DATABASE: mmorts
+  #     MYSQL_USER: mmorts
+  #     MYSQL_PASSWORD: mmorts
+  #   ports:
+  #     - "3306:3306"
+  #   networks:
+  #     - shared_services
+  #   restart: unless-stopped
+  #   healthcheck:
+  #     test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+  #     interval: 10s
+  #     timeout: 3s
+  #     retries: 3
+  #   volumes:
+  #     - mariadb_data:/var/lib/mysql
 
 networks:
   shared_services:
-    driver: bridge
+    external: true  # Use existing shared_services network
 
-volumes:
-  redis_data:
-  mariadb_data:
+# volumes:
+#   redis_data:
+#   mariadb_data:
