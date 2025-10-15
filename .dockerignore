@@ -1,5 +1,5 @@
-# Binaries
-server
+# Binaries (root level only, not cmd/server/)
+/server
 *.exe
 *.dll
 *.so
