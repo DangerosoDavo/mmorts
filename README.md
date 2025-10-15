@@ -313,6 +313,20 @@ Planned metrics:
 
 ## Troubleshooting
 
+### Shell scripts not executable (WSL/Linux)
+
+If you get "Permission denied" when running scripts:
+
+```bash
+# Make scripts executable
+chmod +x deploy.sh update.sh
+
+# Or use git to set executable bit
+git update-index --chmod=+x deploy.sh update.sh
+```
+
+**Note**: The repository includes `.gitattributes` to preserve executable permissions, but WSL sometimes requires manual `chmod` after cloning.
+
 ### Port 8080 already in use
 
 ```bash

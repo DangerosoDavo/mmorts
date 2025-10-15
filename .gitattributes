@@ -1,0 +1,22 @@
+# Shell scripts should always be executable
+*.sh text eol=lf
+deploy.sh eol=lf
+update.sh eol=lf
+
+# Ensure consistent line endings
+*.go text eol=lf
+*.md text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.json text eol=lf
+
+# Docker files
+Dockerfile text eol=lf
+.dockerignore text eol=lf
+docker-compose.yml text eol=lf
+
+# Binary files
+*.exe binary
+*.dll binary
+*.so binary
+*.dylib binary
