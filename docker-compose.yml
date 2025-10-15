@@ -1,35 +1,17 @@
 version: '3.8'
 
 services:
-  # nginx reverse proxy for WSS (WebSocket Secure) support
-  nginx:
-    image: nginx:alpine
-    container_name: mmorts-nginx
-    ports:
-      - "8100:80"    # HTTP (redirects to HTTPS)
-      - "8143:443"   # HTTPS/WSS
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/certs:/etc/nginx/certs:ro  # Mount your SSL certificates here
-    depends_on:
-      - mmorts-server
-    networks:
-      - shared_services
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
-      interval: 30s
-      timeout: 3s
-      retries: 3
+  # nginx service removed - using system nginx with certbot certificates
+  # See NGINX_SETUP.md for configuration instructions
+  # nginx/mmorts-game.conf contains the server block for your existing nginx
 
   mmorts-server:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: mmorts-server
-    # Port 8080 is internal only, accessed through nginx
-    expose:
-      - "8080"
+    ports:
+      - "127.0.0.1:8080:8080"  # Bind to localhost only, accessed via system nginx
     environment:
       - CONFIG_PATH=/root/configs/server.yaml
     volumes:
