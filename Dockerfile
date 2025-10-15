@@ -6,8 +6,11 @@ RUN apk add --no-cache git
 
 WORKDIR /app
 
-# Copy go mod files
+# Copy go mod files and external packages (needed for local replace directives)
 COPY go.mod go.sum ./
+COPY external ./external
+
+# Download dependencies (now external/ exists for replace directives)
 RUN go mod download
 
 # Copy source code
