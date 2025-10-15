@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile
     container_name: mmorts-server
     ports:
-      - "8080:8080"
+      - "8080:8100"
     environment:
       - CONFIG_PATH=/root/configs/server.yaml
     volumes:
@@ -17,7 +17,7 @@ services:
       - shared_services
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080/health"]
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8100/health"]
       interval: 30s
       timeout: 3s
       retries: 3
