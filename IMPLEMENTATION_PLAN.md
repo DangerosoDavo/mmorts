@@ -534,7 +534,7 @@ func handleChatMessage(conn *Connection, msg ChatMessage) {
 
 **Actions**:
 1. Create `Dockerfile` for Go server
-2. Create `docker-compose.yml` with all services
+2. Create `docker compose.yml` with all services
 3. Add Redis and MariaDB containers
 4. Configure shared_services network
 
@@ -611,10 +611,10 @@ CMD ["./server"]
 
 **Files to Create**:
 - `Dockerfile`
-- `docker-compose.yml`
+- `docker compose.yml`
 - `.dockerignore`
 
-**Validation**: `docker-compose up` starts all services successfully
+**Validation**: `docker compose up` starts all services successfully
 
 ---
 

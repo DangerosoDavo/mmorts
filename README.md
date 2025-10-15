@@ -130,7 +130,7 @@ mmorts/
 │   ├── hexcore/             # Hex coordinate system
 │   ├── ecscore/             # Entity Component System
 │   └── ...
-└── docker-compose.yml       # Docker services
+└── docker compose.yml       # Docker services
 ```
 
 ## Authentication
@@ -214,16 +214,16 @@ See [docs/CLIENT_API.md](docs/CLIENT_API.md) for complete API documentation.
 ./update.sh
 
 # View logs
-docker-compose logs -f mmorts-server
+docker compose logs -f mmorts-server
 
 # Stop services
-docker-compose down
+docker compose down
 
 # Remove all data (reset)
-docker-compose down -v
+docker compose down -v
 
 # Check service health
-docker-compose ps
+docker compose ps
 
 # Access Redis CLI
 docker exec -it mmorts-redis redis-cli
@@ -295,7 +295,7 @@ Server logs include:
 
 ```bash
 # Docker logs
-docker-compose logs -f mmorts-server
+docker compose logs -f mmorts-server
 
 # Local logs
 # Logs go to stdout - pipe to file if needed
@@ -350,7 +350,7 @@ redis-cli ping
 # Should return: PONG
 
 # Check Redis logs
-docker-compose logs redis
+docker compose logs redis
 ```
 
 ### JWT validation fails
@@ -367,7 +367,7 @@ Common causes:
 curl https://login.gravitas-games.com/api/public-key
 
 # Check server logs for JWT errors
-docker-compose logs mmorts-server | grep JWT
+docker compose logs mmorts-server | grep JWT
 ```
 
 ### WebSocket connection refused

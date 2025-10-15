@@ -1619,7 +1619,7 @@ mmorts/
 ├── go.mod                             # Root module definition
 ├── go.sum                             # Dependency checksums
 ├── Dockerfile                         # Docker container definition
-├── docker-compose.yml                 # Docker compose for dev environment
+├── docker compose.yml                 # Docker compose for dev environment
 ├── deploy.sh                          # Deployment script
 ├── update.sh                          # Update/rebuild script
 │
@@ -1753,7 +1753,7 @@ mmorts/
 
 ### Phase 7: Docker Deployment
 - [ ] Dockerfile creation
-- [ ] docker-compose.yml for local dev (shared_services network)
+- [ ] docker compose.yml for local dev (shared_services network)
 - [ ] deploy.sh script (build, tag, deploy)
 - [ ] update.sh script (pull, rebuild, restart)
 - [ ] Environment variable management
@@ -1825,7 +1825,7 @@ EXPOSE 8080
 CMD ["./server"]
 ```
 
-**docker-compose.yml (dev environment):**
+**docker compose.yml (dev environment):**
 ```yaml
 version: '3.8'
 
@@ -1901,14 +1901,14 @@ echo "Building Docker image..."
 docker build -t mmorts-server:latest .
 
 echo "Stopping existing container..."
-docker-compose down
+docker compose down
 
 echo "Starting services..."
-docker-compose up -d
+docker compose up -d
 
 echo "Checking health..."
 sleep 5
-docker-compose ps
+docker compose ps
 
 echo "Deployment complete!"
 ```
@@ -1927,8 +1927,8 @@ echo "Updating submodules..."
 git submodule update --init --recursive
 
 echo "Rebuilding and restarting..."
-docker-compose build
-docker-compose up -d
+docker compose build
+docker compose up -d
 
 echo "Update complete!"
 ```
