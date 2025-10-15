@@ -1,0 +1,32 @@
+# MMORTS Server Configuration
+
+server:
+  host: "0.0.0.0"
+  port: 8080
+  tick_rate: 20  # Hz (game loop ticks per second)
+
+jwt:
+  issuer: "login-server"
+  public_key_url: "https://login.gravitas-games.com/api/public-key"
+  public_key_refresh_hours: 24
+
+redis:
+  address: "loginserver_redis:6379"  # Use service name in Docker
+  password: ""
+  db: 0
+  blacklist_prefix: "jwt:blacklist:"
+
+session:
+  max_players: 100
+  initial_map_radius: 5  # Number of hex chunks from origin (radius 5 = ~91 chunks)
+
+chat:
+  max_message_length: 500
+  rate_limit: 10  # messages per minute per player
+
+database:
+  host: "loginserver_mysql"  # Use service name in Docker
+  port: 3306
+  user: "mmorts"
+  password: "mmorts"
+  database: "mmorts"

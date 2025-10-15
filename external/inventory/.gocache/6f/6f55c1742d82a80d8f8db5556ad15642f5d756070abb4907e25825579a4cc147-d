@@ -1,0 +1,4 @@
+./inventory.go
+./registry.go
+./sample.go
+./types.go

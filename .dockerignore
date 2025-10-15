@@ -1,0 +1,45 @@
+# Binaries
+server
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Test files
+*.test
+test/
+
+# Documentation
+*.md
+docs/
+
+# Git
+.git
+.gitignore
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Database
+*.db
+*.sqlite
+
+# Temporary
+tmp/
+temp/
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore

@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  mmorts-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mmorts-server
+    ports:
+      - "8080:8080"
+    environment:
+      - CONFIG_PATH=/root/configs/server.yaml
+    volumes:
+      - ./configs:/root/configs:ro
+    depends_on:
+      redis:
+        condition: service_healthy
+      mariadb:
+        condition: service_healthy
+    networks:
+      - shared_services
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
+  redis:
+    image: redis:7-alpine
+    container_name: mmorts-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - shared_services
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    volumes:
+      - redis_data:/data
+
+  mariadb:
+    image: mariadb:10.11
+    container_name: mmorts-mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: mmorts
+      MYSQL_USER: mmorts
+      MYSQL_PASSWORD: mmorts
+    ports:
+      - "3306:3306"
+    networks:
+      - shared_services
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    volumes:
+      - mariadb_data:/var/lib/mysql
+
+networks:
+  shared_services:
+    driver: bridge
+
+volumes:
+  redis_data:
+  mariadb_data:
