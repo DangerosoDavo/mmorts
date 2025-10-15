@@ -35,20 +35,35 @@ ssl_trusted_certificate /etc/letsencrypt/live/your-domain.com/chain.pem;
 
 ### 3. Update upstream server if needed
 
-If your MMORTS server is running in Docker or on a different port, update the upstream:
+**Default configuration (keep as-is for most cases):**
+
+The default `server localhost:8080;` is correct when:
+- System nginx proxies to Docker container with port binding `127.0.0.1:8080:8080`
+- This is the standard setup described in this guide
+- **You probably don't need to change this**
+
+**Only change the upstream in these special cases:**
 
 ```nginx
 upstream mmorts_gameserver {
-    # For Docker with shared_services network:
-    server mmorts-server:8080;
+    # DEFAULT: System nginx → Docker container with published port
+    server localhost:8080;  # ✓ Use this (already configured)
 
-    # For local Docker with published port:
-    # server localhost:8080;
+    # ONLY IF: Both nginx AND game server run inside Docker on same network
+    # server mmorts-server:8080;  # Uses Docker DNS to resolve container name
 
-    # For remote server:
-    # server 192.168.1.100:8080;
+    # ONLY IF: Game server runs on a different machine
+    # server 192.168.1.100:8080;  # Use actual IP address
+
+    keepalive 32;
 }
 ```
+
+**How it works:**
+- Your `docker-compose.yml` binds container port to host: `127.0.0.1:8080:8080`
+- System nginx connects to `localhost:8080` on the host
+- Docker forwards the connection to the container
+- No changes needed!
 
 ### 4. Enable the site
 
