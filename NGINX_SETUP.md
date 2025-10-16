@@ -83,7 +83,7 @@ sudo systemctl reload nginx
 ```bash
 # Allow game server ports
 sudo ufw allow 8100/tcp  # HTTP (redirects to HTTPS)
-sudo ufw allow 8143/tcp  # HTTPS/WSS
+sudo ufw allow 8443/tcp  # HTTPS/WSS (Cloudflare compatible)
 sudo ufw reload
 ```
 
@@ -123,7 +123,7 @@ Update your web client to connect via WSS:
 
 ```javascript
 // Replace with your actual domain and port
-const gameServerUrl = 'wss://your-domain.com:8143/ws';
+const gameServerUrl = 'wss://your-domain.com:8443/ws';
 const ws = new WebSocket(gameServerUrl, ['access_token', token]);
 ```
 
@@ -133,23 +133,23 @@ const ws = new WebSocket(gameServerUrl, ['access_token', token]);
 
 ```bash
 # Check certificate is valid
-openssl s_client -connect your-domain.com:8143 -servername your-domain.com
+openssl s_client -connect your-domain.com:8443 -servername your-domain.com
 ```
 
 ### 2. Test WebSocket connection
 
 ```bash
 # Test WSS endpoint (requires websocat or similar)
-websocat wss://your-domain.com:8143/ws
+websocat wss://your-domain.com:8443/ws
 
 # Or use browser console:
-# ws = new WebSocket('wss://your-domain.com:8143/ws', ['access_token', 'your-token-here'])
+# ws = new WebSocket('wss://your-domain.com:8443/ws', ['access_token', 'your-token-here'])
 ```
 
 ### 3. Test health endpoint
 
 ```bash
-curl https://your-domain.com:8143/health
+curl https://your-domain.com:8443/health
 ```
 
 ## Troubleshooting
@@ -226,7 +226,7 @@ Add monitoring for the game server endpoint:
 
 ```bash
 # Check if WSS endpoint is responding
-watch -n 5 'curl -s -o /dev/null -w "%{http_code}" https://your-domain.com:8143/health'
+watch -n 5 'curl -s -o /dev/null -w "%{http_code}" https://your-domain.com:8443/health'
 ```
 
 ## Production Recommendations
@@ -256,5 +256,5 @@ watch -n 5 'curl -s -o /dev/null -w "%{http_code}" https://your-domain.com:8143/
 4. **Monitoring**: Set up monitoring for WebSocket connections
    ```bash
    # Check active connections
-   sudo ss -tn | grep :8143 | wc -l
+   sudo ss -tn | grep :8443 | wc -l
    ```
