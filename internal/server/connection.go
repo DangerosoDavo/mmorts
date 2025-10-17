@@ -70,23 +70,42 @@ func (c *Connection) Handle() {
 // readPump pumps messages from the WebSocket connection to the server
 func (c *Connection) readPump() {
 	defer func() {
+		playerInfo := "unauthenticated"
+		if c.player != nil {
+			playerInfo = c.player.Username
+		}
+		log.Printf("readPump ending for %s, closing connection", playerInfo)
 		c.Close()
 	}()
 
 	for {
 		// Read message
-		_, message, err := c.ws.ReadMessage()
+		messageType, message, err := c.ws.ReadMessage()
 		if err != nil {
+			playerInfo := "unauthenticated"
+			if c.player != nil {
+				playerInfo = c.player.Username
+			}
+
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
-				log.Printf("WebSocket read error: %v", err)
+				log.Printf("WebSocket unexpected close error from %s: %v", playerInfo, err)
+			} else if websocket.IsCloseError(err, websocket.CloseNormalClosure, websocket.CloseGoingAway) {
+				log.Printf("WebSocket normal closure from %s: %v", playerInfo, err)
+			} else {
+				log.Printf("WebSocket read error from %s (type: %d): %v", playerInfo, messageType, err)
 			}
 			break
 		}
 
+		// Log raw message for debugging
+		log.Printf("Received raw message from %s (type: %d, length: %d): %s",
+			c.getPlayerInfo(), messageType, len(message), string(message))
+
 		// Parse message
 		var clientMsg network.ClientMessage
 		if err := json.Unmarshal(message, &clientMsg); err != nil {
-			log.Printf("Failed to parse client message: %v", err)
+			log.Printf("Failed to parse client message from %s: %v, raw: %s",
+				c.getPlayerInfo(), err, string(message))
 			c.SendError("invalid_message", "Failed to parse message")
 			continue
 		}
@@ -96,11 +115,20 @@ func (c *Connection) readPump() {
 	}
 }
 
+// getPlayerInfo returns player info for logging
+func (c *Connection) getPlayerInfo() string {
+	if c.player != nil {
+		return c.player.Username
+	}
+	return "unauthenticated"
+}
+
 // writePump pumps messages from the send channel to the WebSocket connection
 func (c *Connection) writePump() {
 	ticker := time.NewTicker(pingPeriod)
 	defer func() {
 		ticker.Stop()
+		log.Printf("writePump ending for %s, closing WebSocket", c.getPlayerInfo())
 		c.ws.Close()
 	}()
 
@@ -110,25 +138,30 @@ func (c *Connection) writePump() {
 			c.ws.SetWriteDeadline(time.Now().Add(writeWait))
 			if !ok {
 				// Channel closed
+				log.Printf("Send channel closed for %s, sending close message", c.getPlayerInfo())
 				c.ws.WriteMessage(websocket.CloseMessage, []byte{})
 				return
 			}
 
 			// Write message
 			if err := c.ws.WriteMessage(websocket.TextMessage, message); err != nil {
-				log.Printf("WebSocket write error: %v", err)
+				log.Printf("WebSocket write error for %s: %v", c.getPlayerInfo(), err)
 				return
 			}
+			log.Printf("Sent message to %s (length: %d)", c.getPlayerInfo(), len(message))
 
 		case <-ticker.C:
 			// Send ping
 			c.ws.SetWriteDeadline(time.Now().Add(writeWait))
 			if err := c.ws.WriteMessage(websocket.PingMessage, nil); err != nil {
+				log.Printf("Failed to send ping to %s: %v", c.getPlayerInfo(), err)
 				return
 			}
+			log.Printf("Sent ping to %s", c.getPlayerInfo())
 
 		case <-c.server.ctx.Done():
 			// Server shutting down
+			log.Printf("Server context done, closing connection for %s", c.getPlayerInfo())
 			return
 		}
 	}
