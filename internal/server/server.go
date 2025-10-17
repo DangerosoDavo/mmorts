@@ -61,6 +61,7 @@ func New(cfg *config.Config) (*Server, error) {
 		upgrader: websocket.Upgrader{
 			ReadBufferSize:  1024,
 			WriteBufferSize: 1024,
+			Subprotocols:    []string{"access_token"}, // Accept access_token subprotocol
 			CheckOrigin: func(r *http.Request) bool {
 				// TODO: Add proper origin checking in production
 				return true
